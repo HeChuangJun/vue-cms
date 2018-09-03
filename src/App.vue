@@ -43,5 +43,22 @@
 <style lang="scss" scoped>
 .app-container{
 	padding-top: 40px;
+	overflow-x: hidden;
+}
+.v-enter{
+	//元素的动画开始前的初始状态和动画结束后的时候的最终状态，是一个时间点
+	opacity: 0;
+	transform: translateX(100%)
+}
+.v-leave-to{
+	//元素的动画开始前的初始状态和动画结束后的时候的最终状态，是一个时间点
+	opacity: 0;
+	transform: translateX(-100%);
+	position: absolute;
+}
+.v-enter-active,
+.v-leave-active{
+	//入出场的动画的时间段
+	transition: all 0.8s ease;//渐变
 }
 </style>
