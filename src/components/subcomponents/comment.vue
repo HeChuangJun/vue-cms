@@ -3,7 +3,8 @@
         <h3>发表评论</h3>
 
         <hr>
-        <textarea placeholder="请输入要bb的内容(最多吐槽120)" maxlength="120"></textarea>
+        <textarea placeholder="请输入要bb的内容(最多吐槽120)" maxlength="120" v-model="msg" ></textarea>
+        <mt-button type="primary" size="large" @click="postComment">发表评论</mt-button>
         <div class="cmt-list">
             <div class="cmt-item" v-for="(item,i) in comments":key="item.add_time">
                 <div class="cmt-title">
@@ -12,7 +13,6 @@
                 <div class="cmt-body">{{item.content===''?'此用户很懒，什么都没说':item.content}}</div>
             </div>
         </div>
-        <mt-button type="primary" size="large">发表评论</mt-button>
         <mt-button type="danger" size="large"plain @click="getMore">加载更多</mt-button>
     </div>
 </template>
@@ -23,7 +23,8 @@
         data(){
             return {
                 comments:[],
-                pageIndex:1//默认显示第一页
+                pageIndex:1,//默认显示第一页
+                msg:''
             }
         },
         created(){
@@ -42,6 +43,30 @@
             getMore(){
                 this.pageIndex++;
                 this.getComments();
+            },
+            postComment(){
+                if(this.msg.trim().length===0){
+                    return Toast("评论内容不能为空！")
+                }
+                this.$http.post('api/postcomment',
+
+                    {user_name:'匿名用户',
+                    add_time:Date.now(),id:Number(this.$route.params.id),content:this.msg.trim()
+
+                    },{headers:{'Access-Control-Allow-Origin':'*'}}
+                    )
+                    .then(result=>{
+                        if(result.body.status===0){
+                            var cmt ={user_name:'匿名用户',
+                                add_time:Date.now(),
+                                content:this.msg.trim()
+                            }
+                            this.comments=this.comments.unshift(cmt);
+                            this.msg='';
+                        }else {
+                            Toast('发表评论失败')
+                        }
+                    })
             }
         },
         props:['id']
